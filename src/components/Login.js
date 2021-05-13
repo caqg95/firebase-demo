@@ -2,18 +2,18 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
 import { Link, useHistory } from "react-router-dom";
+import * as Icon from "react-bootstrap-icons";
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
 
-  const { login } = useAuth();
+  const { login, loginWithGoogle,loginWithFacebook } = useAuth();
   const [error, setError] = useState("");
   const [Loading, setLoading] = useState(false);
   const history = useHistory();
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     try {
       setError("");
       setLoading(true);
@@ -22,6 +22,29 @@ const Login = () => {
     } catch {
       console.log("Algo ha fallado al iniciar sesión");
       setError("Algo ha fallado al iniciar sesión");
+    }
+    setLoading(false);
+  }
+
+  var LoginGoogle = async () => {
+    try {
+      setError("");
+      setLoading(true);
+      await loginWithGoogle();
+      history.push("/");
+    } catch {
+      setError("Algo ha fallado al iniciar sesión con Google");
+    }
+    setLoading(false);
+  };
+  async function LoginFacebook() {
+    try {
+      setError("");
+      setLoading(true);
+      await loginWithFacebook();
+      history.push("/");
+    } catch {
+      setError("Algo ha fallado al iniciar sesión con Facebook");
     }
     setLoading(false);
   }
@@ -40,8 +63,31 @@ const Login = () => {
               <Form.Label>Contraseña</Form.Label>
               <Form.Control type="password" ref={passwordRef} required />
             </Form.Group>
-            <Button disabled={Loading} className="mt-2 w-100" type="submit">
-              Iniciar Sesión
+            <Button
+              id="btnMail"
+              disabled={Loading}
+              className="btn-warning mt-2 w-100"
+              type="submit"
+            >
+              <Icon.Envelope /> Iniciar Sesión
+            </Button>
+            <Button
+              id="btnFacebook"
+              disabled={Loading}
+              onClick={LoginFacebook}
+              className="mt-2 w-100"
+              type="button"
+            >
+              <Icon.Facebook /> Facebook
+            </Button>
+            <Button
+              id="btnGMail"
+              disabled={Loading}
+              onClick={LoginGoogle}
+              className="btn-danger mt-2 w-100"
+              type="button"
+            >
+              <Icon.Google /> Gmail
             </Button>
           </Form>
           <div className="w-100 text-center mt-3">
