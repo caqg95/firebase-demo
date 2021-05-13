@@ -1,27 +1,27 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
-import { Link, useHistory } from "react-router-dom";
-const Login = () => {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+import { Link } from "react-router-dom";
 
-  const { login } = useAuth();
+const ForgotPassword = () => {
+  const emailRef = useRef();
+
+  const { resetPassword } = useAuth();
   const [error, setError] = useState("");
   const [Loading, setLoading] = useState(false);
-  const history = useHistory();
+  const [message, setMessage] = useState("");
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
+      setMessage("");
       setError("");
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      history.push("/");
+      await resetPassword(emailRef.current.value);
+      setMessage("Revisa tu correo para ver las instrucciones");
     } catch {
-      console.log("Algo ha fallado al iniciar sesión");
-      setError("Algo ha fallado al iniciar sesión");
+      setError("Algo ha fallado al reestablecer la contraseña");
     }
     setLoading(false);
   }
@@ -29,23 +29,20 @@ const Login = () => {
     <div>
       <Card>
         <Card.Body>
-          <h2 className="text-center mb-4">Iniciar Sesión</h2>
+          <h2 className="text-center mb-4">Restablecer Contraseña</h2>
           {error && <Alert variant="danger">{error}</Alert>}
+          {message && <Alert variant="success">{message}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group id="email">
               <Form.Label>Email</Form.Label>
               <Form.Control type="email" ref={emailRef} required />
             </Form.Group>
-            <Form.Group id="password">
-              <Form.Label>Contraseña</Form.Label>
-              <Form.Control type="password" ref={passwordRef} required />
-            </Form.Group>
             <Button disabled={Loading} className="mt-2 w-100" type="submit">
-              Iniciar Sesión
+              Restablecer
             </Button>
           </Form>
           <div className="w-100 text-center mt-3">
-            <Link to="/forgot-password">Olvido la Contraseña?</Link>
+            <Link to="/login">Iniciar Sesion</Link>
           </div>
         </Card.Body>
       </Card>
@@ -56,4 +53,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
